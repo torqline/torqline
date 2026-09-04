@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Oswald", ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #0b0c0f;
+  --color-surface: #16181c;
+  --color-surface-2: #1f2126;
+  --color-paper: #f4f2ec;
+  --color-muted: #9a9da3;
+  --color-gold: #c9a961;
+  --color-gold-dark: #8a734a;
+}
+
+body {
+  background-color: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+}

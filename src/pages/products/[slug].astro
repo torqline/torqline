@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import { getCollection, getEntry, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const products = await getCollection('products');
+  return products.map((product) => ({
+    params: { slug: product.id },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+const { Content } = await render(product);
+const category = await getEntry('categories', product.data.category);
+
+const formattedPrice = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: product.data.currency,
+  maximumFractionDigits: 0,
+}).format(product.data.price);
+
+const inquirySubject = encodeURIComponent(`Inquiry: ${product.data.name}`);
+const inquiryBody = encodeURIComponent(
+  `Hi TORQLINE,\n\nI'm interested in the ${product.data.name} (${formattedPrice}). Could you tell me more about availability?\n\nThanks!`
+);
+---
+
+<BaseLayout title={product.data.name} description={product.data.summary} image={product.data.images[0].src}>
+  <section class="mx-auto max-w-6xl px-6 py-16">
+    {
+      category && (
+        <a href={`/categories/${category.id}`} class="text-sm uppercase tracking-wider text-muted hover:text-gold">
+          &larr; {category.data.name}
+        </a>
+      )
+    }
+
+    <div class="mt-6 grid gap-10 lg:grid-cols-2">
+      <div class="space-y-4">
+        {
+          product.data.images.map((image, i) => (
+            <Image
+              src={image}
+              alt={`${product.data.name} — image ${i + 1}`}
+              width={1000}
+              height={750}
+              class="w-full rounded-sm border border-surface-2 object-cover"
+            />
+          ))
+        }
+      </div>
+
+      <div>
+        <h1 class="font-display text-3xl uppercase tracking-wide text-paper sm:text-4xl">{product.data.name}</h1>
+        <p class="mt-3 font-display text-2xl text-gold">{formattedPrice}</p>
+        <p class="mt-6 text-muted">{product.data.summary}</p>
+
+        <div class="mt-6 max-w-none space-y-4 text-muted">
+          <Content />
+        </div>
+
+        {
+          product.data.specs.length > 0 && (
+            <table class="mt-8 w-full border-t border-surface-2 text-sm">
+              <tbody>
+                {product.data.specs.map((spec) => (
+                  <tr class="border-b border-surface-2">
+                    <td class="py-3 pr-4 text-muted">{spec.label}</td>
+                    <td class="py-3 text-paper">{spec.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )
+        }
+
+        <a
+          href={`mailto:hello@torqline.com?subject=${inquirySubject}&body=${inquiryBody}`}
+          class="mt-8 inline-block rounded-sm bg-gold px-6 py-3 font-display text-sm uppercase tracking-wider text-ink transition-colors hover:bg-gold-dark"
+        >
+          Contact to purchase
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

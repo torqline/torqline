@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const categories = await getCollection('categories');
+  return categories.map((category) => ({
+    params: { slug: category.id },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props;
+const { Content } = await render(category);
+const products = (await getCollection('products')).filter((p) => p.data.category === category.id);
+---
+
+<BaseLayout title={category.data.name} description={category.data.description}>
+  <section class="border-b border-surface-2 bg-surface">
+    <div class="mx-auto max-w-6xl px-6 py-16">
+      <p class="font-display text-sm uppercase tracking-[0.35em] text-gold">Category</p>
+      <h1 class="mt-2 font-display text-4xl uppercase tracking-wide text-paper">{category.data.name}</h1>
+      <p class="mt-4 max-w-2xl text-muted">{category.data.description}</p>
+      <div class="mt-4 max-w-2xl space-y-4 text-muted">
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-6 py-16">
+    {
+      products.length > 0 ? (
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {products.map((product) => (
+            <ProductCard product={product} />
+          ))}
+        </div>
+      ) : (
+        <p class="text-muted">More products coming to this category soon.</p>
+      )
+    }
+  </section>
+</BaseLayout>

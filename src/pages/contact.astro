@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// TODO: replace with the brand's real email / phone / socials once set up.
+const email = 'hello@torqline.com';
+---
+
+<BaseLayout title="Contact" description="Get in touch with TORQLINE.">
+  <section class="mx-auto max-w-3xl px-6 py-20">
+    <p class="font-display text-sm uppercase tracking-[0.35em] text-gold">Contact</p>
+    <h1 class="mt-2 font-display text-4xl uppercase tracking-wide text-paper">Get in touch</h1>
+    <p class="mt-6 text-muted">
+      Online checkout is on the way. Until then, reach out directly and
+      we'll help you with product questions, availability, and orders.
+    </p>
+
+    <a
+      href={`mailto:${email}`}
+      class="mt-8 inline-block rounded-sm bg-gold px-6 py-3 font-display text-sm uppercase tracking-wider text-ink transition-colors hover:bg-gold-dark"
+    >
+      {email}
+    </a>
+  </section>
+</BaseLayout>
